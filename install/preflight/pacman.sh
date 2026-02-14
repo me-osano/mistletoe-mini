@@ -143,7 +143,9 @@ echo ""
 echo "📂 Backups saved to: $BACKUP_DIR"
 echo ""
 echo "🔄 Adding omarchy key and updating package database..."
-sudo pacman-key --recv-keys 40DFB630FF42BCFFB047046CF0134EE680CAC571 --keyserver keys.openpgp.org
+sudo pacman-key --recv-keys 40DFB630FF42BCFFB047046CF0134EE680CAC571 --keyserver keyserver.ubuntu.com 2>/dev/null \
+  || sudo pacman-key --recv-keys 40DFB630FF42BCFFB047046CF0134EE680CAC571 --keyserver hkps://keys.openpgp.org 2>/dev/null \
+  || sudo pacman-key --recv-keys 40DFB630FF42BCFFB047046CF0134EE680CAC571 --keyserver hkps://pgp.mit.edu
 sudo pacman-key --lsign-key 40DFB630FF42BCFFB047046CF0134EE680CAC571
 
 sudo pacman -Sy
