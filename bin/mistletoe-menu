@@ -491,12 +491,11 @@ show_update_process_menu() {
 }
 
 show_update_config_menu() {
-  case $(menu "Use default config" "  Hyprland\n  Hypridle\n  Hyprlock\n  Hyprsunset\n󱣴  Plymouth\n  Swayosd\n󰌧  Walker\n󰍜  Waybar") in
+  case $(menu "Use default config" "  Hyprland\n  Hypridle\n  Hyprlock\n  Hyprsunset\n  Swayosd\n󰌧  Walker\n󰍜  Waybar") in
   *Hyprland*) present_terminal mistletoe-refresh-hyprland ;;
   *Hypridle*) present_terminal mistletoe-refresh-hypridle ;;
   *Hyprlock*) present_terminal mistletoe-refresh-hyprlock ;;
   *Hyprsunset*) present_terminal mistletoe-refresh-hyprsunset ;;
-  *Plymouth*) present_terminal mistletoe-refresh-plymouth ;;
   *Swayosd*) present_terminal mistletoe-refresh-swayosd ;;
   *Walker*) present_terminal mistletoe-refresh-walker ;;
   *Waybar*) present_terminal mistletoe-refresh-waybar ;;
