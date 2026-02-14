@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Overwrite the user config for hyprsunset with the Mistletoe default and restart the service.
+#
+mistletoe-refresh-config hypr/hyprsunset.conf
+mistletoe-restart-hyprsunset

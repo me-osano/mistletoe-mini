@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Sync Mistletoe theme to Neovim (LazyVim)
+
+NEOVIM_THEME_SRC="$HOME/.config/mistletoe/current/theme/neovim.lua"
+NEOVIM_THEME_DEST="$HOME/.config/nvim/lua/plugins/theme.lua"
+SKIP_FLAG="$HOME/.local/state/mistletoe/toggles/skip-neovim-theme-changes"
+
+[[ -f "$SKIP_FLAG" ]] && exit 0
+[[ -d "$HOME/.config/nvim" ]] || exit 0
+
+if [[ -f "$NEOVIM_THEME_SRC" ]]; then
+  mkdir -p "$(dirname "$NEOVIM_THEME_DEST")"
+  cp "$NEOVIM_THEME_SRC" "$NEOVIM_THEME_DEST"
+fi

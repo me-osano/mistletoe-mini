@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+# Reinstall the Mistletoe configuration directory from the git source.
+
+git clone "https://github.com/me-osano/mistletoe-mini.git" ~/.local/share/mistletoe-new >/dev/null
+mv $MISTLETOE_PATH ~/.local/share/mistletoe-old
+mv ~/.local/share/mistletoe-new $MISTLETOE_PATH

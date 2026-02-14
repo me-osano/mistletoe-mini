@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Overwrite the user configs for the Walker application launcher (which also powers the Mistletoe Menu) and restart the services.
+
+# Ensure walker is set to autostart
+mkdir -p ~/.config/autostart/
+cp $MISTLETOE_PATH/default/walker/walker.desktop ~/.config/autostart/
+
+# And restarts if it crashes or is killed
+mkdir -p ~/.config/systemd/user/app-walker@autostart.service.d/
+cp $MISTLETOE_PATH/default/walker/restart.conf ~/.config/systemd/user/app-walker@autostart.service.d/restart.conf
+
+systemctl --user daemon-reload
+
+# Refresh configs
+mistletoe-refresh-config walker/config.toml
+mistletoe-refresh-config elephant/calc.toml
+mistletoe-refresh-config elephant/desktopapplications.toml
+
+# Restart service
+mistletoe-restart-walker

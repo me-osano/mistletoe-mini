@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Launch the default editor as determined by $EDITOR
+# Starts suitable editors in a terminal window and otherwise as a regular application.
+
+mistletoe-cmd-present "$EDITOR" || EDITOR=nvim
+
+case "$EDITOR" in
+nvim | vim | nano | micro | hx | helix | fresh)
+  exec mistletoe-launch-tui "$EDITOR" "$@"
+  ;;
+*)
+  exec setsid "$EDITOR" "$@"
+  ;;
+esac

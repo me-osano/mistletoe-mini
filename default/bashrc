@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+#######################################################
+# Interactive Bash Layer
+#######################################################
+
+# ----------------------------------------------------
+# Ensure interactive shell
+# ----------------------------------------------------
+[[ $- != *i* ]] && return
+
+# ----------------------------------------------------
+# Shell behavior & history
+# ----------------------------------------------------
+shopt -s histappend checkwinsize
+HISTCONTROL=erasedups:ignoredups:ignorespace
+HISTSIZE=500
+HISTFILESIZE=10000
+HISTTIMEFORMAT="%F %T"
+PROMPT_COMMAND="history -a${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+
+# ----------------------------------------------------
+# Less / man colors
+# ----------------------------------------------------
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+# ---------------------------
+# Bash Completion
+# ---------------------------
+if [[ -f /usr/share/bash-completion/bash_completion ]] && [[ -z $BASH_COMPLETION_VERSINFO ]]; then
+  source /usr/share/bash-completion/bash_completion
+fi
+
+# ---------------------------
+# External Utilities
+# ---------------------------
+if command -v mise &>/dev/null; then
+  eval "$(mise activate bash)"
+fi
+
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init bash)"
+fi
+
+# FZF keybindings
+if command -v fzf &>/dev/null; then
+  if [[ -f /usr/share/fzf/completion.bash ]]; then
+    source /usr/share/fzf/completion.bash
+  fi
+  if [[ -f /usr/share/fzf/key-bindings.bash ]]; then
+    source /usr/share/fzf/key-bindings.bash
+  fi
+fi
+
+# ---------------------------
+# Starship Prompt
+# ---------------------------
+if command -v starship &>/dev/null; then
+  eval "$(starship init bash)"
+fi
+
+# ----------------------------------------------------
+# Fastfetch (optional eye candy)
+# ----------------------------------------------------
+#command -v fastfetch >/dev/null && fastfetch
+
+# ----------------------------------------------------
+# Readline / key bindings
+# ----------------------------------------------------
+bind 'set bell-style visible'
+bind 'set completion-ignore-case on'
+bind 'set show-all-if-ambiguous on'
+bind 'set show-all-if-unmodified on'
+bind 'set colored-stats on'
+
+bind 'set meta-flag on'
+bind 'set input-meta on'
+bind 'set output-meta on'
+bind 'set convert-meta off'
+
+# History search like zsh
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
+
+# Optional custom binding
+bind '"\C-f":"zi\n"'
+
+# ----------------------------------------------------
+# Aliases (pure shell convenience)
+# ----------------------------------------------------
+alias cp='cp -i'
+alias mv='mv -i'
+alias mkdir='mkdir -p'
+alias ping='ping -c 10'
+alias less='less -R'
+
+alias home='cd ~'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+
+alias ls='eza -lh --group-directories-first --icons=auto'
+alias lsa='ls -a'
+alias lt='eza --tree --level=2 --long --icons --git'
+alias lta='lt -a'
+
+alias ff="fzf --preview 'bat --style=numbers --color=always {}'"
+
+alias g='git'
+alias gcm='git commit -m'
+alias gcam='git commit -a -m'
+alias gcad='git commit -a --amend'
+
+alias update-grub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
+
+# ----------------------------------------------------
+# Smart directory navigation
+# ----------------------------------------------------
+zd() {
+  if [ $# -eq 0 ]; then
+    builtin cd ~ || return
+  elif [ -d "$1" ]; then
+    builtin cd "$1"
+  else
+    z "$@" && printf "\U000F17A9 " && pwd || echo "Directory not found"
+  fi
+}
+
+cd() {
+  if [ -n "$1" ]; then
+    builtin cd "$@" && ls
+  else
+    builtin cd ~ && ls
+  fi
+}
+
+# ----------------------------------------------------
+# Python virtualenv helper
+# ----------------------------------------------------
+venv() {
+  [ -n "$1" ] || { echo "Usage: venv <path>"; return; }
+  source "$1/bin/activate" 2>/dev/null || echo "Invalid venv"
+  true
+}
+
+# -------------------------------
+# Format Drive Function
+# -------------------------------
+# Format an entire drive into a single partition (ext4 or FAT32)
+format-drive() {
+  if [ $# -lt 2 ] || [ $# -gt 3 ]; then
+    echo "Usage: format-drive <device> <label> [ext4|fat32]"
+    echo "Example: format-drive /dev/sdb MyDrive ext4"
+    echo -e "\nAvailable drives:"
+    lsblk -d -o NAME,SIZE,MODEL | awk '{print "/dev/"$1" - "$2" "$3}'
+    return 1
+  fi
+
+  local device="$1"
+  local label="$2"
+  local fstype="${3:-ext4}" # default to ext4 if not specified
+  local part
+
+  if [[ "$fstype" != "ext4" && "$fstype" != "fat32" ]]; then
+    echo "Error: Filesystem type must be either 'ext4' or 'fat32'."
+    return 1
+  fi
+
+  echo "WARNING: This will ERASE ALL DATA on $device and format it as $fstype labeled '$label'."
+  read -rp "Are you sure you want to continue? (y/N): " confirm
+  [[ "$confirm" =~ ^[Yy]$ ]] || return 0
+
+  set -e
+  trap 'echo "Error: Formatting failed. Drive may be partially modified."' ERR
+
+  echo "→ Wiping existing signatures..."
+  sudo wipefs -a "$device"
+  sudo dd if=/dev/zero of="$device" bs=1M count=100 status=progress || true
+
+  echo "→ Creating new GPT partition table..."
+  sudo parted -s "$device" mklabel gpt
+  sudo parted -s "$device" mkpart primary "$fstype" 1MiB 100%
+
+  part="$([[ $device == *"nvme"* ]] && echo "${device}p1" || echo "${device}1")"
+
+  echo "→ Formatting $part as $fstype..."
+  case "$fstype" in
+  ext4)
+    sudo mkfs.ext4 -L "$label" "$part"
+    ;;
+  fat32)
+    sudo mkfs.vfat -F32 -n "$label" "$part"
+    ;;
+  esac
+
+  sync
+  echo "✅ Drive formatted as $fstype, labeled '$label'."
+}
+
+# ----------------------------------------------------
+# Open files via XDG
+# ----------------------------------------------------
+open() { xdg-open "$@" >/dev/null 2>&1 & }
+
+# ----------------------------------------------------
+# IP helpers
+# ----------------------------------------------------
+get_local_ip() {
+  ip route get 1.1.1.1 2>/dev/null | awk '{print $7}'
+}
+
+whatsmyip() {
+  echo -n "Internal IP: "
+  get_local_ip
+  echo -n "External IP: "
+  curl -4 ifconfig.me 2>/dev/null
+}
+alias whatismyip="whatsmyip"

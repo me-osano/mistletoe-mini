@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Sync Mistletoe theme to Emacs
+
+EMACS_THEME_SRC="$HOME/.config/mistletoe/current/theme/emacs.el"
+EMACS_THEME_DEST="$HOME/.config/emacs/themes/palette.el"
+SKIP_FLAG="$HOME/.local/state/mistletoe/toggles/skip-emacs-theme-changes"
+
+[[ -f "$SKIP_FLAG" ]] && exit 0
+[[ -d "$HOME/.config/emacs" ]] || exit 0
+
+if [[ -f "$EMACS_THEME_SRC" ]]; then
+  mkdir -p "$(dirname "$EMACS_THEME_DEST")"
+  cp "$EMACS_THEME_SRC" "$EMACS_THEME_DEST"
+fi

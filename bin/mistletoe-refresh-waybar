@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Overwrite the user configs for the Waybar menu bar with the Mistletoe defaults and restart the service.
+
+mistletoe-refresh-config waybar/config.jsonc
+mistletoe-refresh-config waybar/style.css
+mistletoe-restart-waybar

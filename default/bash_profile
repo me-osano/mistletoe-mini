@@ -1,0 +1,122 @@
+#
+# ~/.bash_profile - Login shell configuration
+#
+
+# ============================================
+# Source .bashrc for interactive shells
+# ============================================
+[[ -f ~/.bashrc ]] && . ~/.bashrc
+
+# ============================================
+# Cargo environment (Rust)
+# ============================================
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+
+# ============================================
+# XDG Base Directory specification
+# ============================================
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+# ============================================
+# Default applications
+# ============================================
+export EDITOR=nvim
+export VISUAL=nvim
+export SUDO_EDITOR=nvim
+export BAT_THEME=ansi
+export TERMINAL=xdg-terminal-exec
+
+# ============================================
+# Development environment
+# ============================================
+# Python (if using virtual environments)
+#export PYTHONDONTWRITEBYTECODE=1
+#export PYTHONUNBUFFERED=1
+
+# Docker (if using)
+#export DOCKER_BUILDKIT=1
+#export COMPOSE_DOCKER_CLI_BUILD=1
+
+# ============================================
+# PATH configuration
+# ============================================
+# Local binaries
+export PATH="$HOME/.local/bin:$PATH"
+
+# Cargo binaries
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# mise (runtime version manager) - if using
+[[ -d "$HOME/.local/share/mise/shims" ]] && export PATH="$HOME/.local/share/mise/shims:$PATH"
+
+# ===========================================
+# Mistletoe PATH Setup
+# ============================================
+export MISTLETOE_PATH="$HOME/.local/mistletoe"
+export PATH="$MISTLETOE_PATH/bin:$PATH"
+export MISTLETOE_SCREENSHOT_DIR="$HOME/Pictures/Screenshots"
+
+# ============================================
+# Wayland environment variables
+# ============================================
+# Force Wayland for supported apps
+export MOZ_ENABLE_WAYLAND=1              # Firefox
+export QT_QPA_PLATFORM=wayland           # Qt apps
+export SDL_VIDEODRIVER=wayland           # SDL2
+export CLUTTER_BACKEND=wayland           # Clutter
+export GDK_BACKEND=wayland,x11           # GTK (fallback to X11)
+
+# Qt theming
+export QT_QPA_PLATFORMTHEME=qt6ct        # Qt theme config
+
+# ============================================
+# GPU/Graphics (AMD)
+# ============================================
+export LIBVA_DRIVER_NAME=radeonsi        # VA-API for AMD
+export VDPAU_DRIVER=radeonsi            # VDPAU for AMD
+
+# ============================================
+# TTY1 auto-start Hyprland (silent boot)
+# ============================================
+if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then
+  exec start hyprland.desktop > /dev/null 2>&1
+fi
+
+# ============================================
+# SSH agent (if using SSH keys)
+# ============================================
+# Uncomment if you use SSH keys frequently
+# if [ -z "$SSH_AUTH_SOCK" ]; then
+#   eval "$(ssh-agent -s)" > /dev/null
+#   ssh-add ~/.ssh/id_ed25519 2>/dev/null
+# fi
+
+# ============================================
+# GPG agent (if using GPG)
+# ============================================
+# Uncomment if you use GPG for signing/encryption
+# export GPG_TTY=$(tty)
+# gpg-connect-agent updatestartuptty /bye >/dev/null
+
+# ============================================
+# Custom aliases (login-specific)
+# ============================================
+# Quick system info on login (only on remote sessions)
+# if [ -n "$SSH_CONNECTION" ]; then
+#   echo "Welcome to $(hostname)"
+#   uptime
+# fi
+
+# ============================================
+# Performance tweaks
+# ============================================
+# Disable command hashing (important for mise/version managers)
+set +h
+
+
+# ============================================
+# End of .bash_profile
+# ============================================

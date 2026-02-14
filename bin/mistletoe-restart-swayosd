@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mistletoe-restart-app swayosd-server

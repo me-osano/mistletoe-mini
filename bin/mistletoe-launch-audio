@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Launch the Mistletoe audio controls TUI (provided by wiremix).
+
+mistletoe-launch-or-focus-tui wiremix

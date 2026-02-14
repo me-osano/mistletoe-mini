@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Launch a floating terminal with the Mistletoe logo presentation, then execute the command passed in, and finally end with the mistletoe-show-done presentation.
+# Used by actions such as Update System.
+
+cmd="$*"
+exec setsid xdg-terminal-exec --app-id=org.mistletoe.terminal --title=Mistletoe -e bash -c "mistletoe-show-logo; $cmd; if [ \$? -ne 130 ]; then mistletoe-show-done; fi"
