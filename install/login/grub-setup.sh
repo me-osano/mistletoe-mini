@@ -10,14 +10,16 @@ GRUB_CFG=/etc/default/grub
 GRUB_DST=/boot/grub/grub.cfg
 THEME_SRC="$HOME/.local/share/mistletoe/install/login/grub-theme"
 THEME_DST=/boot/grub/themes/mistletoe
+BACKUP_DIR="$HOME/Archive/grub"
 
 #-------------------------------------------------------------------------------
 # 1. Helpers
 #-------------------------------------------------------------------------------
 backup_grub() {
   local ts=$(date +%Y%m%d%H%M%S)
-  sudo cp "$GRUB_CFG" "${GRUB_CFG}.bak.${ts}"
-  echo "Backed up $GRUB_CFG → ${GRUB_CFG}.bak.${ts}"
+  mkdir -p "$BACKUP_DIR"
+  sudo cp "$GRUB_CFG" "$BACKUP_DIR/grub.bak.${ts}"
+  echo "Backed up $GRUB_CFG → $BACKUP_DIR/grub.bak.${ts}"
 }
 
 # idempotent key=value editor

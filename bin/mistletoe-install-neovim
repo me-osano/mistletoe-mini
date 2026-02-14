@@ -15,7 +15,7 @@ command -v nvim >/dev/null || {
 }
 
 conf_dir="$HOME/.config/nvim"
-backup_dir="${conf_dir}.bak.$(date +%Y%m%d%H%M%S)"
+backup_dir="$HOME/Archive/nvim.bak.$(date +%Y%m%d%H%M%S)"
 
 if [[ -d "$conf_dir" ]]; then
   sudo mv "$conf_dir" "$backup_dir"

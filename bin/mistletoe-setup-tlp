@@ -23,8 +23,8 @@ fi
 
 #Backup Tlp before editing
 if [[ -f /etc/tlp.conf ]]; then
-  sudo cp /etc/tlp.conf "/etc/tlp.conf.bak"
-  echo "Backed up /etc/tlp.conf to /etc/tlp.conf.bak"
+  sudo cp /etc/tlp.conf "$HOME/Archive/tlp.conf.bak"
+  echo "Backed up /etc/tlp.conf to $HOME/Archive/tlp.conf.bak"
 else
   echo "No existing /etc/tlp.conf found; skipping backup."
 fi
