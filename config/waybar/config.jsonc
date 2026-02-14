@@ -4,8 +4,16 @@
   "position": "top",
   "spacing": 0,
   "height": 26,
-  "modules-left": ["custom/mistletoe", "hyprland/workspaces"],
-  "modules-center": ["clock", "custom/update", "custom/voxtype", "custom/screenrecording-indicator"],
+  "modules-left": [
+    "custom/mistletoe",
+    "clock"
+  ],
+  "modules-center": [
+    "hyprland/workspaces",
+    "custom/update",
+    "custom/voxtype", 
+    "custom/screenrecording-indicator"
+  ],
   "modules-right": [
     "group/tray-expander",
     "bluetooth",
