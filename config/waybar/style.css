@@ -7,8 +7,9 @@
   border: none;
   border-radius: 0;
   min-height: 0;
-  font-family: 'JetBrainsMono Nerd Font';
-  font-size: 12px;
+  font-family: 'CaskaydiaMono Nerd Font';
+  font-weight: bold;
+  font-size: 14px;
 }
 
 .modules-left {
@@ -19,15 +20,42 @@
   margin-right: 8px;
 }
 
+window#waybar {
+  background: transparent;
+}
+
+#workspaces {
+  background-color: @background;
+  padding: 5px 3px;
+  margin: 0 0 0 12px;
+  border-radius: 18px;
+  border: 1px solid @background;
+  color: @foreground;
+}
+
 #workspaces button {
   all: initial;
   padding: 0 6px;
-  margin: 0 1.5px;
+  margin: 0 3px;
   min-width: 9px;
+  border-radius: 50px;
+  color: transparent;
+  background-color: @background;
+  transition: all 0.3s ease-in-out;
 }
 
 #workspaces button.empty {
   opacity: 0.5;
+}
+
+#workspaces button.active {
+  background-color: @background;
+  color: @background;
+  min-width: 10px;
+}
+
+#workspaces button:hover {
+  background-color: @color8;
 }
 
 #cpu,
@@ -58,6 +86,13 @@
 
 tooltip {
   padding: 2px;
+  border: 1px solid @background;
+  border-radius: 12px;
+}
+
+tooltip label {
+  color: @foreground;
+  padding: 6px;
 }
 
 #custom-update {
